@@ -1,12 +1,27 @@
 import http from "http";
-const PORT = 8000;
+const PORT = process.env.PORT;
 
 const server = http.createServer((req, res) => {
-  // res.setHeader("Content-Type", "text/html");
-  // res.statusCode = 404;
-
-  res.writeHead(500, { "Content-Type": "application/json" });
-  res.end(JSON.stringify({ message: "Server Error" }));
+  try {
+    // Check if GET request
+    if (req.method === "GET") {
+      if (req.url === "/") {
+        res.writeHead(200, { "Content-Type": "text/html" });
+        res.end("<h1>Homepage</h1>");
+      } else if (req.url === "/about") {
+        res.writeHead(200, { "Content-Type": "text/html" });
+        res.end("<h1>About Page</h1>");
+      } else {
+        res.writeHead(404, { "Content-Type": "text/html" });
+        res.end("<h1>Page Not Found</h1>");
+      }
+    } else {
+      throw new Error("Invalid request method");
+    }
+  } catch (error) {
+    res.writeHead(500, { "Content-Type": "text/plain" });
+    res.end("Internal Server Error");
+  }
 });
 
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
